@@ -8,13 +8,18 @@ import utils
 from rcj_soccer_robot import RCJSoccerRobot, TIME_STEP
 
 class PID:
+    sum_error = 0
+    error_back = 0
     def __init__(self, kp = 2, ki = 0.1, kd = 0):
         self.kp = kp
         self.ki = ki
         self.kd = kd
 
     def output(self, error):
-        self.out = self.kp * error + self.ki * error * 0.1 + self.kd * error / 0.1
+        self.sum_error += error * 0.1
+        self.error_d = (error - self.error_back) / 0.1
+        self.error_back = error
+        self.out = self.kp * error + self.ki * self.sum_error + self.kd * self.error_d
         return self.out
 
 class MyRobot1(RCJSoccerRobot):
@@ -25,6 +30,8 @@ class MyRobot1(RCJSoccerRobot):
         Error_back = 0
         sum_Error_y = 0
         Error_back_y = 0
+        control = PID(kp, ki, kd)
+        control_y = PID(kp_y, ki_y, kd_y)
         while self.robot.step(TIME_STEP) != -1:
             if self.is_new_data():
                 data = self.get_new_data()  # noqa: F841
@@ -57,7 +64,6 @@ class MyRobot1(RCJSoccerRobot):
                 Error_d = (Error - Error_back) / 0.1
                 Error_back = Error
 
-                control = PID()
                 v = 0
                 # w = kp * Error + ki * sum_Error + kd * Error_d
                 w = control.output(Error)
@@ -73,13 +79,12 @@ class MyRobot1(RCJSoccerRobot):
                 self.right_motor.setVelocity(vr)
 
                 if Error < 1e-5:
-                    Error_y = ball_data["strength"] - 0.02
+                    Error_y = ball_data["strength"]
                     print(robot_pos)
                     sum_Error_y += Error_y * 0.1
                     Error_d_y = (Error_y - Error_back_y) / 0.1
                     Error_back_y = Error_y
 
-                    control_y = PID(kp_y, ki_y, kd_y)
                     w = 0
                     # v = kp_y * Error_y + ki_y * sum_Error_y + kd_y * Error_d_y
                     v = control_y.output(Error_y)
