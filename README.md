@@ -15,7 +15,7 @@ The robot first moves to the back of the ball. The direction is set to the oppon
 ### Controller
 PID controller is used in order to make the steady-state error minimum, fast response (short rise time), no oscillations and higher stability. Also ZOH method used for descritization.
 
-# Creativity
+### Creativity
 The robot only sets the angle and the moves to the desired position to use less data and time.
 
 ## Robot2(Defend)
@@ -33,5 +33,5 @@ The robot first moves to the back of the ball. The direction is set to ones goal
 ### Controller
 PID controller is used in order to make the steady-state error minimum, fast response (short rise time), no oscillations and higher stability. Also ZOH method used for descritization.
 
-# Creativity
+### Creativity
 The robot only sets the angle and the moves to the desired position to use less data and time.
